@@ -1,3 +1,4 @@
+import math
 from colorama import init, Fore
 
 # Inicializar Colorama para habilitar los colores en la terminal
@@ -34,14 +35,7 @@ def continuar_buscando():
 
 # Mensaje de bienvenida
 def mostrar_bienvenida():
-    print(Fore.BLUE + r"""                                        
-         █████╗ ███████╗ █████╗ ███████╗██╗     
-        ██╔══██╗╚══███╔╝██╔══██╗██╔════╝██║     
-        ███████║  ███╔╝ ███████║█████╗  ██║     
-        ██╔══██║ ███╔╝  ██╔══██║██╔══╝  ██║     
-        ██║  ██║███████╗██║  ██║███████╗███████╗
-        ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝                                  
-    """)
+    print(Fore.BLUE + "Bienvenido al programa de búsqueda de raíces por el método de la bisección")
 
 # Mensaje de despedida
 def mostrar_despedida():
@@ -51,31 +45,24 @@ def mostrar_despedida():
 mostrar_bienvenida()
 
 while True:
-    print(Fore.YELLOW + "\nIngrese la función a evaluar en formato Python (por ejemplo, 'x**3 - 3*x + 1'): ")
+    print(Fore.YELLOW + "\nIngrese la función a evaluar en formato Python (por ejemplo, 'x**3 - 3*x + 1'). Asegúrate de usar 'math' para funciones matemáticas (p.ej., 'math.sin(x)').")
     user_function = input()
     func = eval("lambda x: " + user_function)  # Convertir la cadena a una función lambda
-    
+
     a, b = obtener_intervalo()
     max_iter = obtener_iteraciones_maximas()
-    relative_error = float(input("Ingrese el error relativo porcentual: "))
+    # Recomendación de un error relativo más pequeño para lograr al menos 8 decimales de precisión.
+    print("Se recomienda un error relativo de 1e-9 para lograr una precisión de 8 decimales.")
+    relative_error = float(input("Ingrese el error relativo deseado: "))
     
     root, iterations = biseccion(func, a, b, max_iter, relative_error)
     if root is not None:
         print(Fore.GREEN + "\n¡Raíz encontrada! 🎉")
-        print(f"{Fore.RESET}Valor de la raíz: {Fore.CYAN}{root:.6f}")
+        # Ajuste en la impresión para mostrar 8 decimales de precisión.
+        print(f"{Fore.RESET}Valor de la raíz: {Fore.CYAN}{root:.8f}")
         print(f"Iteraciones realizadas: {Fore.CYAN}{iterations}")
     else:
         print(Fore.RED + "\nEl método de la bisección no convergió dentro del número máximo de iteraciones. 😞")
-        increase_iter = input("¿Desea aumentar la cantidad de iteraciones? (s/n): ").strip().lower()
-        if increase_iter == 's':
-            new_max_iter = obtener_iteraciones_maximas()
-            root, iterations = biseccion(func, a, b, new_max_iter, relative_error)
-            if root is not None:
-                print(Fore.GREEN + "\n¡Raíz encontrada! 🎉")
-                print(f"{Fore.RESET}Valor de la raíz: {Fore.CYAN}{root:.6f}")
-                print(f"Iteraciones realizadas: {Fore.CYAN}{iterations}")
-            else:
-                print(Fore.RED + "\nEl método de la bisección no convergió incluso con más iteraciones. 😞")
     
     if not continuar_buscando():
         mostrar_despedida()
