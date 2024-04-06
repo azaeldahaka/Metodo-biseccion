@@ -21,8 +21,13 @@ def newton_method(func, func_deriv, initial_guess, max_iter, relative_error):
     x = initial_guess
     iter_count = 0
     while iter_count < max_iter:
-        x_next = x - func(x) / func_deriv(x)
-        if abs(x_next - x) / abs(x_next) < relative_error:
+        try:
+            x_next = x - func(x) / func_deriv(x)
+        except ZeroDivisionError:
+            print("División por cero en la derivada.")
+            return None, iter_count
+
+        if abs(x_next - x) < relative_error:
             return x_next, iter_count
         x = x_next
         iter_count += 1
@@ -32,8 +37,14 @@ def newton_method(func, func_deriv, initial_guess, max_iter, relative_error):
 def secant_method(func, x0, x1, max_iter, relative_error):
     iter_count = 0
     while iter_count < max_iter:
-        x_next = x1 - func(x1) * (x1 - x0) / (func(x1) - func(x0))
-        if abs(x_next - x1) / abs(x_next) < relative_error:
+        fx0 = func(x0)
+        fx1 = func(x1)
+        if fx1 - fx0 == 0:
+            print("División por cero en la estimación de la derivada.")
+            return None, iter_count
+
+        x_next = x1 - fx1 * (x1 - x0) / (fx1 - fx0)
+        if abs(x_next - x1) < relative_error:
             return x_next, iter_count
         x0, x1 = x1, x_next
         iter_count += 1
@@ -59,7 +70,7 @@ def obtener_iteraciones_maximas():
 
 # Función para solicitar si el usuario desea continuar
 def continuar_buscando():
-    response = input("¿Desea ingresar otro intervalo? (s/n): ").strip().lower()
+    response = input("¿Desea ingresar otra funcion? (s/n): ").strip().lower()
     return response == 's'
 
 # Mensaje de bienvenida
@@ -78,9 +89,9 @@ while True:
                         "1. Método de la bisección\n"
                         "2. Método de Newton\n"
                         "3. Método de la secante\n"
-                        "4. Salir\n")
+                        "0. Salir\n")
 
-    opcion = input("Seleccione una opción (1/2/3/4): ").strip()
+    opcion = input("Seleccione una opción: ").strip()
 
     if opcion == '1':
         metodo = biseccion
@@ -88,7 +99,7 @@ while True:
         metodo = newton_method
     elif opcion == '3':
         metodo = secant_method
-    elif opcion == '4':
+    elif opcion == '0':
         mostrar_despedida()
         break
     else:
@@ -100,7 +111,6 @@ while True:
 
     func_deriv = None
     if opcion == '2':
-        print(Fore.YELLOW + "\nPara las funciones trigonométricas como seno, coseno y tangente, asegúrese de ingresarlas en formato 'sin(x)', 'cos(x)' y 'tan(x)' respectivamente.")
         func_deriv = obtener_derivada(user_function)
 
     func = sp.lambdify(sp.Symbol('x'), user_function, 'numpy')

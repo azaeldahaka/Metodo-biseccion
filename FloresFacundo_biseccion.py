@@ -31,7 +31,7 @@ def obtener_error_relativo():
 
 # Función para solicitar si el usuario desea continuar
 def continuar_buscando():
-    response = input("¿Desea ingresar otro intervalo? (s/n): ").strip().lower()
+    response = input("¿Desea ingresar otra funcion? (s/n): ").strip().lower()
     return response == 's'
 
 # Ejemplo de uso
